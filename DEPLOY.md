@@ -4,6 +4,16 @@
 
 ---
 
+## 🌐 在线地址
+
+| 地址 | 说明 |
+|------|------|
+| **https://www.victor-resume.online** | 🎯 主站（自定义域名，国内可访问） |
+| https://wongv6246-droid.github.io/resume-victor | GitHub Pages 原始地址 |
+| https://resume-victor-cyan.vercel.app | Vercel 备用地址（海外） |
+
+---
+
 ## 📁 项目结构速览
 
 | 文件 | 作用 |
@@ -16,6 +26,7 @@
 | `src/data/config.js` | DeepSeek API 配置 |
 | `src/style.css` | 全局样式 |
 | `public/` | 静态资源目录 |
+| `.github/workflows/deploy.yml` | GitHub Actions 自动部署配置 |
 
 ---
 
@@ -34,6 +45,8 @@ npm run dev
 
 ## 🚀 发布到公网
 
+### 方式一：自动部署（推荐）
+
 修改完成并确认无误后，执行以下命令：
 
 ```bash
@@ -43,11 +56,36 @@ git commit -m "这里写你本次修改的内容说明"
 git push
 ```
 
-推送后，**Cloudflare Pages 会自动构建并部署**，等待约 **1-2 分钟**，访问以下地址即可看到更新：
+推送后，**GitHub Actions 会自动构建并部署到 GitHub Pages**，等待约 **1-2 分钟**，访问以下地址即可看到更新：
 
-**https://resume-victor.pages.dev**
+**https://www.victor-resume.online**
 
-> 无需手动登录 Cloudflare，推送即自动部署。
+> 无需手动操作，推送即自动部署。
+
+### 方式二：手动部署
+
+如果自动部署失败，可以手动部署：
+
+```bash
+cd D:/求职网站
+
+# 1. 确保依赖已安装
+npm install
+
+# 2. 构建项目
+npm run build
+
+# 3. 创建并推送到 gh-pages 分支
+git checkout --orphan gh-pages
+git rm -rf .
+cp -r dist/* .
+rm -rf dist
+git add -A
+git commit -m "部署到 GitHub Pages"
+git push origin gh-pages --force
+git checkout main
+git branch -D gh-pages
+```
 
 ---
 
@@ -72,5 +110,17 @@ git push
 
 - `node_modules` 和 `dist` 目录已配置 `.gitignore`，不会被推送到仓库
 - 修改后务必执行 `git push`，否则网站不会更新
-- 如果推送后 Cloudflare 部署失败，可登录 [Cloudflare Dashboard](https://dash.cloudflare.com/) → Pages → resume-victor → Deployments → 手动触发重新部署
+- 如果推送后 GitHub Actions 部署失败，可登录 GitHub 仓库 → Actions 标签页查看失败原因，或手动部署
 - 知识库文档（`qa-knowledge.md`）支持随时补充，AI 会自动学习新内容
+- 自定义域名 `victor-resume.online` 通过阿里云 DNS（CNAME → www）解析到 GitHub Pages
+
+---
+
+## 🔧 首次部署参考
+
+如需重新部署到新域名：
+
+1. 在阿里云 DNS 添加 CNAME 记录：`www` → `wongv6246-droid.github.io`
+2. 在 GitHub 仓库 Settings → Pages → Custom domain 填入域名
+3. `.github/workflows/deploy.yml` 已配置自动部署，推送到 `main` 后自动生效
+4. `vite.config.js` 中 `base` 设为 `'/'`（适用于自定义域名根路径）
